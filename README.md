@@ -1,113 +1,125 @@
-# Full-Stack Authentication & Role-Based Access Control (RBAC) System
+# Full-Stack Role-Based Access Control (RBAC) & Authentication System
 
-A secure, premium-designed full-stack web application demonstrating JWT-based authentication and Role-Based Access Control (RBAC). 
+A secure, premium-grade full-stack web application showcasing production-ready **JWT-based Authentication** and **Role-Based Access Control (RBAC)**. 
 
-Built using a **Java Spring Boot** backend (Spring Security, JPA, MapStruct, H2) and a **React + TypeScript** frontend (Vite, TailwindCSS, React Query, Axios).
-
----
-
-## Features
-
-1. **JWT Authentication & Registration**: Users can sign up, select their role (`USER` or `ADMIN`), and log in securely. Credentials are validated, and a signed JWT is returned upon successful authentication.
-2. **Access Protection (RBAC)**: Enforces endpoints security on the backend and routes protection on the frontend:
-   - `/api/public`: Publicly accessible to anyone.
-   - `/api/user`: Accessible by logged-in users with `USER` or `ADMIN` roles.
-   - `/api/admin`: Accessible strictly by users with the `ADMIN` role.
-3. **Interactive Control Panel (Dashboard)**: A visually gorgeous dark-themed dashboard that reveals and unlocks API content panels dynamically based on the current user's role:
-   - Admins see all panels unlocked and displaying data from backend API calls.
-   - Standard users see the `ADMIN` panel locked with a lock overlay and status indicator.
-4. **Auto-Persisted Sessions**: Login status is persisted securely in `localStorage` across page refreshes.
-5. **Interactive Swagger/OpenAPI Docs**: Backend routes are fully documented with Swagger UI.
-6. **Seed Data**: System pre-seeds standard test accounts on startup.
+Built with a robust **Java Spring Boot** backend (leveraging Spring Security, JPA, MapStruct, and H2) and a fluid, dark-themed **React + TypeScript** frontend (using Vite, TailwindCSS v4, React Query, and React Router).
 
 ---
 
-## Tech Stack
+## 🏗️ Architecture & Security Highlights
+
+### 🛡️ Backend Security Architecture
+*   **Stateless JWT Authentication**: Implemented custom security filters to intercept HTTP requests, validate JWT signatures, and set user context in the `SecurityContextHolder`.
+*   **Method & Endpoint Security**: Explicitly declared access permissions on REST endpoints:
+    *   `/api/public/**` -> Permits all requests.
+    *   `/api/user/**` -> Requires `ROLE_USER` or `ROLE_ADMIN`.
+    *   `/api/admin/**` -> Strictly requires `ROLE_ADMIN`.
+*   **Password Hashing**: BCrypt encryption for password storage.
+*   **Database Seeding**: Automatically seeds standard role-based accounts on startup for immediate local evaluation.
+
+### 🎨 Frontend Design & UX Decisions
+*   **Role-Based UI Restructuring**: Interactive dashboard panels adapt to the authenticated user's credentials. Restricted components display a locked overlay with visual indicators.
+*   **Persistent Sessions**: Secure token storage in `localStorage` with interceptors to automatically attach JWTs to outgoing requests.
+*   **React Router Guards**: Client-side route blocking to prevent standard users from accessing admin routes.
+*   **Asynchronous State**: Managed via TanStack React Query for cached, auto-refreshed queries, preventing unnecessary network traffic.
+
+---
+
+## 🛠️ Technology Stack
 
 ### Backend
-- **Core**: Java 17, Spring Boot 3.2.5
-- **Security**: Spring Security + Java JWT (JJWT)
-- **Data**: Spring Data JPA + H2 In-Memory Database + Hibernate
-- **Utilities**: MapStruct (for DTO mappings) and Lombok
-- **Documentation**: Springdoc OpenAPI v2 (Swagger UI)
+*   **Framework**: Java 17, Spring Boot 3.2.5
+*   **Security**: Spring Security 6, JJWT (Java JWT)
+*   **Persistence**: Spring Data JPA, Hibernate, H2 In-Memory Database
+*   **Mappers**: MapStruct 1.5.5 (clean DTO-Entity translations)
+*   **Utilities**: Lombok
+*   **Documentation**: Springdoc OpenAPI v2 (Swagger UI)
 
 ### Frontend
-- **Framework**: React 19 + TypeScript + Vite
-- **Styling**: TailwindCSS v4 (integrated via `@tailwindcss/vite` plugin)
-- **State Management**: TanStack React Query (v5)
-- **Routing**: React Router DOM (v7)
-- **HTTP Client**: Axios (configured with request interceptor for JWT injection)
-- **Forms**: React Hook Form (with email & length validation)
-- **Icons**: Lucide React
+*   **Build Tool & Language**: Vite, React 19, TypeScript
+*   **Styling**: TailwindCSS v4 (using the official `@tailwindcss/vite` plugin)
+*   **Routing**: React Router DOM v7
+*   **State Management**: TanStack React Query v5
+*   **HTTP Client**: Axios (configured with interceptors)
+*   **Icons**: Lucide React
 
 ---
 
-## Getting Started
+## 🔌 API Reference & Endpoints
+
+| Endpoint | Method | Required Role | Description |
+| :--- | :--- | :--- | :--- |
+| `/api/auth/register` | `POST` | *Public* | Creates a new user with `USER` or `ADMIN` role |
+| `/api/auth/login` | `POST` | *Public* | Authenticates user and returns signed JWT token |
+| `/api/public` | `GET` | *Public* | Public content panel payload |
+| `/api/user` | `GET` | `USER` or `ADMIN` | User protected dashboard content |
+| `/api/admin` | `GET` | `ADMIN` | Admin protected management content |
+
+---
+
+## 🔑 Demo Seed Accounts
+
+Upon project initialization, the backend automatically seeds the H2 database with the following demo accounts:
+
+### 👤 Administrator Account
+*   **Email**: `admin@example.com`
+*   **Password**: `admin123`
+*   **Assigned Role**: `ADMIN`
+
+### 👥 Standard User Account
+*   **Email**: `user@example.com`
+*   **Password**: `user123`
+*   **Assigned Role**: `USER`
+
+---
+
+## 🚀 Getting Started
 
 ### Prerequisites
-- **Java**: JDK 17 or higher (Java 19 verified)
-- **Node.js**: Node 18+ (Node 22.14 verified)
+*   **Java**: JDK 17 or higher
+*   **Node.js**: Node 18 or higher (Node 22 recommended)
+*   **Maven**: Embedded wrapper `mvnw` is included in the project
 
 ---
 
-### Backend Setup (Spring Boot)
+### 🟢 Running the Backend (Spring Boot)
 
-1. Open your terminal and navigate to the `backend` folder:
-   ```bash
-   cd backend
-   ```
-2. Run the application using the included Maven Wrapper:
-   - **Windows (Command Prompt / PowerShell)**:
-     ```cmd
-     mvnw.cmd spring-boot:run
-     ```
-   - **Linux / macOS**:
-     ```bash
-     chmod +x mvnw
-     ./mvnw spring-boot:run
-     ```
-3. The server will start on port `8080`.
-4. Access the Swagger UI API documentation at:
-   [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)
-5. Access the H2 Database console at:
-   [http://localhost:8080/h2-console](http://localhost:8080/h2-console) (JDBC URL: `jdbc:h2:mem:rbacdb`, User: `sa`, Password: empty)
-
-#### Seed Accounts (Created automatically on startup)
-- **Admin Account**:
-  - **Email**: `admin@example.com`
-  - **Password**: `admin123`
-  - **Role**: `ADMIN`
-- **Standard User Account**:
-  - **Email**: `user@example.com`
-  - **Password**: `user123`
-  - **Role**: `USER`
+1. Navigate to the `backend` folder:
+    ```bash
+    cd backend
+    ```
+2. Start the application:
+    *   **Windows (PowerShell/CMD)**:
+        ```cmd
+        $env:JAVA_HOME="C:\Program Files\Java\jdk-21"  # Adjust if JDK is installed elsewhere
+        .\mvnw.cmd spring-boot:run
+        ```
+    *   **Linux / macOS**:
+        ```bash
+        chmod +x mvnw
+        ./mvnw spring-boot:run
+        ```
+3. The server starts on port **`8080`**.
+4. **Swagger API Docs**: Open [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html) to interact with raw endpoints.
+5. **H2 Console**: Open [http://localhost:8080/h2-console](http://localhost:8080/h2-console)
+    *   **JDBC URL**: `jdbc:h2:mem:rbacdb`
+    *   **Username**: `sa`
+    *   **Password**: *(leave blank)*
 
 ---
 
-### Frontend Setup (React)
+### 🔵 Running the Frontend (React)
 
 1. Open a new terminal and navigate to the `frontend` folder:
-   ```bash
-   cd frontend
-   ```
-2. Install npm dependencies:
-   ```bash
-   npm install
-   ```
+    ```bash
+    cd frontend
+    ```
+2. Install npm packages:
+    ```bash
+    npm install
+    ```
 3. Start the Vite development server:
-   ```bash
-   npm run dev
-   ```
-4. Open your browser and navigate to:
-   [http://localhost:5173](http://localhost:5173)
-
----
-
-## IDE Compatibility (Eclipse & IntelliJ)
-
-This project has been structured cleanly for easy importing:
-- **IntelliJ IDEA**: 
-  - Go to `File -> Open` and select the `rbac-auth-system` root folder or the `backend` directory. IntelliJ will automatically detect it as a Maven module and import dependencies.
-- **Eclipse IDE**:
-  - Go to `File -> Import... -> Maven -> Existing Maven Projects`.
-  - Select the `backend` directory containing `pom.xml`. Eclipse will import and configure the Java build path automatically.
+    ```bash
+    npm run dev
+    ```
+4. Access the web app at: **[http://localhost:5173/](http://localhost:5173/)**
